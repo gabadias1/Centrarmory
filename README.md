@@ -1,2 +1,2 @@
 # Centrarmory
-Trabalho de Banco de Dados da faculdade utfpr-cm
+Desenvolvimento do trabalho final de Banco de Dados |UTFPR-CM|
