@@ -1,0 +1,385 @@
+-- 1. Criação das tabelas (ordem correta)
+
+CREATE TABLE Efetivo (
+    NomeGuerra VARCHAR(255) PRIMARY KEY,
+    CPF VARCHAR(14) UNIQUE NOT NULL,
+    Patente VARCHAR(50),
+    Imediato_NomeGuerra VARCHAR(255),
+    Idade INT,
+    FOREIGN KEY (Imediato_NomeGuerra) REFERENCES Efetivo(NomeGuerra)
+);
+
+CREATE TABLE Permissao_Efetivo (
+    ID_Permissao SERIAL PRIMARY KEY,
+    NomeGuerra_Efetivo VARCHAR(255) NOT NULL,
+    Tipo_Item VARCHAR(50) NOT NULL,
+    Descricao_Permissao TEXT,
+    FOREIGN KEY (NomeGuerra_Efetivo) REFERENCES Efetivo(NomeGuerra)
+);
+
+CREATE TABLE Tipo_Movimentacao (
+    ID_TipoMovimentacao SERIAL PRIMARY KEY,
+    Descricao VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE Acessorio_Categoria (
+    ID_Categoria SERIAL PRIMARY KEY,
+    Tipo VARCHAR(100),
+    Marca VARCHAR(100),
+    Categoria_Acessorio VARCHAR(100),
+    Plataforma VARCHAR(100),
+    Nome_Acessorio VARCHAR(255)
+);
+
+CREATE TABLE Explosivo_Categoria (
+    ID_Categoria SERIAL PRIMARY KEY,
+    Tipo_Explosivo VARCHAR(100),
+    ID_Permissao INT,
+    FOREIGN KEY (ID_Permissao) REFERENCES Permissao_Efetivo(ID_Permissao)
+);
+
+CREATE TABLE Municao_Categoria (
+    ID_Categoria SERIAL PRIMARY KEY,
+    Calibre VARCHAR(50),
+    Fabricante VARCHAR(100),
+    ID_Permissao INT,
+    FOREIGN KEY (ID_Permissao) REFERENCES Permissao_Efetivo(ID_Permissao)
+);
+
+CREATE TABLE Suprimento_Categoria (
+    ID_Categoria SERIAL PRIMARY KEY,
+    Tipo_Suprimento VARCHAR(100),
+    ID_Permissao INT,
+    FOREIGN KEY (ID_Permissao) REFERENCES Permissao_Efetivo(ID_Permissao)
+);
+
+CREATE TABLE Vestimenta_Categoria (
+    ID_Categoria SERIAL PRIMARY KEY,
+    Tipo_Vestimenta VARCHAR(100),
+    ID_Permissao INT,
+    FOREIGN KEY (ID_Permissao) REFERENCES Permissao_Efetivo(ID_Permissao)
+);
+
+CREATE TABLE Arma_Categoria (
+    ID_Categoria SERIAL PRIMARY KEY,
+    Marca VARCHAR(100),
+    Nomenclatura VARCHAR(100),
+    Calibre VARCHAR(50),
+    ID_Permissao INT,
+    FOREIGN KEY (ID_Permissao) REFERENCES Permissao_Efetivo(ID_Permissao)
+);
+
+CREATE TABLE Acessorio_Estoque (
+    ID_Estoque SERIAL PRIMARY KEY,
+    ID_Categoria INT NOT NULL,
+    Responsavel_NomeGuerra VARCHAR(255) NOT NULL,
+    Disponivel BOOLEAN DEFAULT TRUE,
+    ID_Movimentacao INT,
+    FOREIGN KEY (ID_Categoria) REFERENCES Acessorio_Categoria(ID_Categoria),
+    FOREIGN KEY (Responsavel_NomeGuerra) REFERENCES Efetivo(NomeGuerra)
+);
+
+CREATE TABLE Explosivo_Estoque (
+    Lote VARCHAR(255) PRIMARY KEY,
+    Validade DATE,
+    ID_Categoria INT NOT NULL,
+    Quantidade_Inicial INT NOT NULL,
+    Quantidade_Atual INT NOT NULL,
+    Responsavel_NomeGuerra VARCHAR(255) NOT NULL,
+    ID_Movimentacao INT,
+    FOREIGN KEY (ID_Categoria) REFERENCES Explosivo_Categoria(ID_Categoria),
+    FOREIGN KEY (Responsavel_NomeGuerra) REFERENCES Efetivo(NomeGuerra)
+);
+
+CREATE TABLE Municao_Estoque (
+    Lote VARCHAR(255) PRIMARY KEY,
+    Validade DATE,
+    ID_Categoria INT NOT NULL,
+    Quantidade_Inicial INT NOT NULL,
+    Quantidade_Atual INT NOT NULL,
+    Responsavel_NomeGuerra VARCHAR(255) NOT NULL,
+    FOREIGN KEY (ID_Categoria) REFERENCES Municao_Categoria(ID_Categoria),
+    FOREIGN KEY (Responsavel_NomeGuerra) REFERENCES Efetivo(NomeGuerra)
+);
+
+CREATE TABLE Suprimento_Estoque (
+    ID_Estoque SERIAL PRIMARY KEY,
+    Validade DATE,
+    ID_Categoria INT NOT NULL,
+    Responsavel_NomeGuerra VARCHAR(255) NOT NULL,
+    Disponivel BOOLEAN DEFAULT TRUE,
+    ID_Movimentacao INT,
+    FOREIGN KEY (ID_Categoria) REFERENCES Suprimento_Categoria(ID_Categoria),
+    FOREIGN KEY (Responsavel_NomeGuerra) REFERENCES Efetivo(NomeGuerra)
+);
+
+CREATE TABLE Vestimenta_Estoque (
+    ID_Estoque SERIAL PRIMARY KEY,
+    Tamanho VARCHAR(10),
+    ID_Categoria INT NOT NULL,
+    Cor VARCHAR(50),
+    Responsavel_NomeGuerra VARCHAR(255) NOT NULL,
+    Disponivel BOOLEAN DEFAULT TRUE,
+    ID_Movimentacao INT,
+    FOREIGN KEY (ID_Categoria) REFERENCES Vestimenta_Categoria(ID_Categoria),
+    FOREIGN KEY (Responsavel_NomeGuerra) REFERENCES Efetivo(NomeGuerra)
+);
+
+CREATE TABLE Arma_Estoque (
+    Numero_Serie VARCHAR(255) PRIMARY KEY,
+    ID_Categoria INT NOT NULL,
+    Responsavel_NomeGuerra VARCHAR(255) NOT NULL,
+    Disponivel BOOLEAN DEFAULT TRUE,
+    ID_Movimentacao INT,
+    FOREIGN KEY (ID_Categoria) REFERENCES Arma_Categoria(ID_Categoria),
+    FOREIGN KEY (Responsavel_NomeGuerra) REFERENCES Efetivo(NomeGuerra)
+);
+
+CREATE TABLE Movimentacoes (
+    ID_Movimentacao SERIAL PRIMARY KEY,
+    Data_Movimentacao DATE NOT NULL,
+    Hora_Movimentacao TIME NOT NULL,
+    Tipo_Movimentacao_ID INT NOT NULL,
+    Responsavel_NomeGuerra VARCHAR(255) NOT NULL,
+    NomeSolicitante_NomeGuerra VARCHAR(255),
+    Devolver_Status BOOLEAN DEFAULT FALSE,
+    Devolucao_Confirmada BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (Tipo_Movimentacao_ID) REFERENCES Tipo_Movimentacao(ID_TipoMovimentacao),
+    FOREIGN KEY (Responsavel_NomeGuerra) REFERENCES Efetivo(NomeGuerra),
+    FOREIGN KEY (NomeSolicitante_NomeGuerra) REFERENCES Efetivo(NomeGuerra)
+);
+
+CREATE TABLE Detalhe_Movimentacao (
+    ID_DetalheMovimentacao SERIAL PRIMARY KEY,
+    ID_Movimentacao INT NOT NULL,
+    ID_Acessorio_Estoque INT,
+    Lote_Explosivo_Estoque VARCHAR(255),
+    Lote_Municao_Estoque VARCHAR(255),
+    ID_Suprimento_Estoque INT,
+    ID_Vestimenta_Estoque INT,
+    NumeroSerie_Arma_Estoque VARCHAR(255),
+    Quantidade_Solicitada INT,
+    Quantidade_Devolvida INT,
+    FOREIGN KEY (ID_Movimentacao) REFERENCES Movimentacoes(ID_Movimentacao),
+    FOREIGN KEY (ID_Acessorio_Estoque) REFERENCES Acessorio_Estoque(ID_Estoque),
+    FOREIGN KEY (Lote_Explosivo_Estoque) REFERENCES Explosivo_Estoque(Lote),
+    FOREIGN KEY (Lote_Municao_Estoque) REFERENCES Municao_Estoque(Lote),
+    FOREIGN KEY (ID_Suprimento_Estoque) REFERENCES Suprimento_Estoque(ID_Estoque),
+    FOREIGN KEY (ID_Vestimenta_Estoque) REFERENCES Vestimenta_Estoque(ID_Estoque),
+    FOREIGN KEY (NumeroSerie_Arma_Estoque) REFERENCES Arma_Estoque(Numero_Serie)
+);
+
+-- 2. Inserções (10 itens cada)
+
+-- Efetivo
+INSERT INTO Efetivo (NomeGuerra, CPF, Patente, Imediato_NomeGuerra, Idade) VALUES
+('VITOR', '219.835.047-50', 'Major', NULL, 23),
+('LARA', '569.108.243-42', 'Soldado', 'VITOR', 43),
+('MARCELA', '361.452.980-06', 'Cabo', 'VITOR', 27),
+('BERNARDO', '845.217.960-01', 'Major', 'MARCELA', 23),
+('ENRICO', '146.930.825-89', 'Major', 'VITOR', 48),
+('LORENA', '649.358.720-47', 'Capitão', 'VITOR', 33),
+('OLIVIA', '102.546.897-01', 'Soldado', 'LARA', 22),
+('MIGUEL', '087.239.184-30', 'Tenente', 'MARCELA', 29),
+('RAFAELA', '894.015.247-88', 'Cabo', 'ENRICO', 35),
+('BRUNO', '143.420.176-91', 'Coronel', 'ENRICO', 46);
+
+-- Permissao_Efetivo
+INSERT INTO Permissao_Efetivo (NomeGuerra_Efetivo, Tipo_Item, Descricao_Permissao) VALUES
+('ENRICO', 'Munição', 'Autorizado para acesso e manuseio de item em operação.'),
+('RAFAELA', 'Explosivo', 'Autorizado para acesso e transporte sob supervisão.'),
+('VITOR', 'Arma', 'Treinamento completo para manuseio de armamento.'),
+('BRUNO', 'Vestimenta', 'Liberação para equipamentos de uso tático.'),
+('LORENA', 'Suprimento', 'Acesso aos recursos logísticos.'),
+('MARCELA', 'Explosivo', 'Autorização em missão especial.'),
+('LARA', 'Arma', 'Controle em base.'),
+('MIGUEL', 'Munição', 'Autorização permanente.'),
+('OLIVIA', 'Suprimento', 'Uso em campo.'),
+('BERNARDO', 'Vestimenta', 'Responsável por distribuição.');
+
+-- Tipo_Movimentacao
+INSERT INTO Tipo_Movimentacao (Descricao) VALUES
+('Distribuição'), ('Devolução'), ('Recolhimento'), ('Transferência'), ('Uso em exercício'),
+('Uso em missão'), ('Manutenção'), ('Treinamento'), ('Fiscalização'), ('Emergência');
+
+-- Acessorio_Categoria
+INSERT INTO Acessorio_Categoria (Tipo, Marca, Categoria_Acessorio, Plataforma, Nome_Acessorio) VALUES
+('Lanterna', 'Bravo Tactical', 'Iluminação', 'Universal', 'Lanterna Tática X1'),
+('Mira', 'Aimpoint', 'Óptico', 'Rifle', 'Mira Holo X2'),
+('Cinto', 'TacticalPro', 'Suporte', 'Universal', 'Cinto Tático P3'),
+('Colete', 'SafeGear', 'Proteção', 'Universal', 'Colete Balístico C4'),
+('Capacete', 'HeadSafe', 'Proteção', 'Universal', 'Capacete Tático H5'),
+('Mochila', 'CarryAll', 'Carga', 'Universal', 'Mochila Tática M6'),
+('Luva', 'GripTech', 'Proteção', 'Universal', 'Luva Tática L7'),
+('Óculos', 'VisionX', 'Proteção', 'Universal', 'Óculos Balísticos O8'),
+('Bota', 'TrailMaster', 'Calçado', 'Universal', 'Bota Tática B9'),
+('Relógio', 'TimePro', 'Equipamento', 'Universal', 'Relógio Tático R10');
+
+-- Acessorio_Estoque
+INSERT INTO Acessorio_Estoque (ID_Categoria, Responsavel_NomeGuerra, Disponivel) VALUES
+(1, 'VITOR', TRUE),
+(2, 'LARA', TRUE),
+(3, 'MARCELA', TRUE),
+(4, 'BERNARDO', TRUE),
+(5, 'ENRICO', TRUE),
+(6, 'LORENA', TRUE),
+(7, 'OLIVIA', TRUE),
+(8, 'MIGUEL', TRUE),
+(9, 'RAFAELA', TRUE),
+(10, 'BRUNO', TRUE);
+
+-- Explosivo_Categoria
+INSERT INTO Explosivo_Categoria (Tipo_Explosivo, ID_Permissao) VALUES
+('C4', 2),
+('TNT', 6),
+('Dinamite', 1),
+('Semtex', 3),
+('ANFO', 4),
+('Nitroglicerina', 5),
+('RDX', 7),
+('PETN', 8),
+('HMX', 9),
+('Tetryl', 10);
+
+-- Explosivo_Estoque
+INSERT INTO Explosivo_Estoque (Lote, Validade, ID_Categoria, Quantidade_Inicial, Quantidade_Atual, Responsavel_NomeGuerra) VALUES
+('EXP001', '2025-12-31', 1, 100, 90, 'VITOR'),
+('EXP002', '2025-11-30', 2, 150, 140, 'LARA'),
+('EXP003', '2026-01-15', 3, 200, 195, 'MARCELA'),
+('EXP004', '2025-10-10', 4, 120, 110, 'BERNARDO'),
+('EXP005', '2025-09-05', 5, 130, 125, 'ENRICO'),
+('EXP006', '2026-03-20', 6, 160, 158, 'LORENA'),
+('EXP007', '2026-07-07', 7, 180, 175, 'OLIVIA'),
+('EXP008', '2025-08-18', 8, 140, 138, 'MIGUEL'),
+('EXP009', '2025-12-01', 9, 110, 100, 'RAFAELA'),
+('EXP010', '2026-02-28', 10, 115, 110, 'BRUNO');
+
+-- Municao_Categoria
+INSERT INTO Municao_Categoria (Calibre, Fabricante, ID_Permissao) VALUES
+('9mm', 'CBC', 1),
+('5.56mm', 'Fiocchi', 2),
+('7.62mm', 'Sellier & Bellot', 3),
+('12 gauge', 'Remington', 4),
+('.45 ACP', 'Winchester', 5),
+('40 S&W', 'Federal', 6),
+('223 Remington', 'Hornady', 7),
+('308 Winchester', 'PMC', 8),
+('357 Magnum', 'Blazer', 9),
+('380 ACP', 'Magtech', 10);
+
+-- Municao_Estoque
+INSERT INTO Municao_Estoque (Lote, Validade, ID_Categoria, Quantidade_Inicial, Quantidade_Atual, Responsavel_NomeGuerra) VALUES
+('MUN001', '2025-11-30', 1, 500, 490, 'VITOR'),
+('MUN002', '2025-12-31', 2, 400, 390, 'LARA'),
+('MUN003', '2026-01-20', 3, 600, 590, 'MARCELA'),
+('MUN004', '2025-10-15', 4, 550, 540, 'BERNARDO'),
+('MUN005', '2025-09-25', 5, 450, 440, 'ENRICO'),
+('MUN006', '2026-03-30', 6, 470, 460, 'LORENA'),
+('MUN007', '2026-06-10', 7, 480, 470, 'OLIVIA'),
+('MUN008', '2025-08-22', 8, 490, 480, 'MIGUEL'),
+('MUN009', '2025-12-10', 9, 520, 510, 'RAFAELA'),
+('MUN010', '2026-02-15', 10, 530, 520, 'BRUNO');
+
+-- Suprimento_Categoria
+INSERT INTO Suprimento_Categoria (Tipo_Suprimento, ID_Permissao) VALUES
+('Ração Tipo 1', 1),
+('Água Potável', 2),
+('Kit Médico', 3),
+('Combustível', 4),
+('Ferramentas', 5),
+('Peças Sobressalentes', 6),
+('Lubrificantes', 7),
+('Material de Escritório', 8),
+('Equipamento Eletrônico', 9),
+('Material de Limpeza', 10);
+
+-- Suprimento_Estoque
+INSERT INTO Suprimento_Estoque (Validade, ID_Categoria, Responsavel_NomeGuerra, Disponivel) VALUES
+('2026-01-31', 1, 'VITOR', TRUE),
+('2026-02-28', 2, 'LARA', TRUE),
+('2026-03-31', 3, 'MARCELA', TRUE),
+('2026-04-30', 4, 'BERNARDO', TRUE),
+('2026-05-31', 5, 'ENRICO', TRUE),
+('2026-06-30', 6, 'LORENA', TRUE),
+('2026-07-31', 7, 'OLIVIA', TRUE),
+('2026-08-31', 8, 'MIGUEL', TRUE),
+('2026-09-30', 9, 'RAFAELA', TRUE),
+('2026-10-31', 10, 'BRUNO', TRUE);
+
+-- Vestimenta_Categoria
+INSERT INTO Vestimenta_Categoria (Tipo_Vestimenta, ID_Permissao) VALUES
+('Capacete', 1),
+('Colete', 2),
+('Uniforme', 3),
+('Bota', 4),
+('Luvas', 5),
+('Cinto', 6),
+('Óculos', 7),
+('Máscara', 8),
+('Capacete Balístico', 9),
+('Capa de Chuva', 10);
+
+-- Vestimenta_Estoque
+INSERT INTO Vestimenta_Estoque (Tamanho, ID_Categoria, Cor, Responsavel_NomeGuerra, Disponivel) VALUES
+('M', 1, 'Verde Oliva', 'VITOR', TRUE),
+('L', 2, 'Preto', 'LARA', TRUE),
+('P', 3, 'Camuflado', 'MARCELA', TRUE),
+('42', 4, 'Marrom', 'BERNARDO', TRUE),
+('M', 5, 'Cinza', 'ENRICO', TRUE),
+('G', 6, 'Verde', 'LORENA', TRUE),
+('P', 7, 'Transparente', 'OLIVIA', TRUE),
+('43', 8, 'Preto', 'MIGUEL', TRUE),
+('G', 9, 'Verde Escuro', 'RAFAELA', TRUE),
+('GG', 10, 'Azul', 'BRUNO', TRUE);
+
+-- Arma_Categoria
+INSERT INTO Arma_Categoria (Marca, Nomenclatura, Calibre, ID_Permissao) VALUES
+('Taurus', 'PT 24/7', '9mm', 1),
+('Beretta', '92FS', '9mm', 2),
+('Colt', 'M1911', '.45 ACP', 3),
+('FN Herstal', 'FAL', '7.62mm', 4),
+('Heckler & Koch', 'MP5', '9mm', 5),
+('Glock', '17', '9mm', 6),
+('SIG Sauer', 'P226', '9mm', 7),
+('Remington', '700', '7.62mm', 8),
+('Winchester', 'Model 70', '7.62mm', 9),
+('Smith & Wesson', 'M&P', '9mm', 10);
+
+-- Arma_Estoque
+INSERT INTO Arma_Estoque (Numero_Serie, ID_Categoria, Responsavel_NomeGuerra, Disponivel) VALUES
+('SN0001', 1, 'VITOR', TRUE),
+('SN0002', 2, 'LARA', TRUE),
+('SN0003', 3, 'MARCELA', TRUE),
+('SN0004', 4, 'BERNARDO', TRUE),
+('SN0005', 5, 'ENRICO', TRUE),
+('SN0006', 6, 'LORENA', TRUE),
+('SN0007', 7, 'OLIVIA', TRUE),
+('SN0008', 8, 'MIGUEL', TRUE),
+('SN0009', 9, 'RAFAELA', TRUE),
+('SN0010', 10, 'BRUNO', TRUE);
+
+-- Movimentacoes
+INSERT INTO Movimentacoes (Data_Movimentacao, Hora_Movimentacao, Tipo_Movimentacao_ID, Responsavel_NomeGuerra, NomeSolicitante_NomeGuerra, Devolver_Status, Devolucao_Confirmada) VALUES
+('2025-06-01', '08:00', 1, 'VITOR', 'LARA', FALSE, FALSE),
+('2025-06-02', '09:00', 2, 'LARA', 'MARCELA', TRUE, TRUE),
+('2025-06-03', '10:00', 3, 'MARCELA', 'BERNARDO', FALSE, FALSE),
+('2025-06-04', '11:00', 4, 'BERNARDO', 'ENRICO', TRUE, TRUE),
+('2025-06-05', '12:00', 5, 'ENRICO', 'LORENA', FALSE, FALSE),
+('2025-06-06', '13:00', 6, 'LORENA', 'OLIVIA', TRUE, FALSE),
+('2025-06-07', '14:00', 7, 'OLIVIA', 'MIGUEL', FALSE, TRUE),
+('2025-06-08', '15:00', 8, 'MIGUEL', 'RAFAELA', TRUE, FALSE),
+('2025-06-09', '16:00', 9, 'RAFAELA', 'BRUNO', FALSE, TRUE),
+('2025-06-10', '17:00', 10, 'BRUNO', 'VITOR', TRUE, FALSE);
+
+-- Detalhe_Movimentacao
+INSERT INTO Detalhe_Movimentacao (ID_Movimentacao, ID_Acessorio_Estoque, Lote_Explosivo_Estoque, Lote_Municao_Estoque, ID_Suprimento_Estoque, ID_Vestimenta_Estoque, NumeroSerie_Arma_Estoque, Quantidade_Solicitada, Quantidade_Devolvida) VALUES
+(1, 1, 'EXP001', 'MUN001', 1, 1, 'SN0001', 5, 0),
+(2, 2, 'EXP002', 'MUN002', 2, 2, 'SN0002', 3, 3),
+(3, 3, 'EXP003', 'MUN003', 3, 3, 'SN0003', 2, 0),
+(4, 4, 'EXP004', 'MUN004', 4, 4, 'SN0004', 1, 1),
+(5, 5, 'EXP005', 'MUN005', 5, 5, 'SN0005', 7, 0),
+(6, 6, 'EXP006', 'MUN006', 6, 6, 'SN0006', 4, 2),
+(7, 7, 'EXP007', 'MUN007', 7, 7, 'SN0007', 6, 0),
+(8, 8, 'EXP008', 'MUN008', 8, 8, 'SN0008', 8, 8),
+(9, 9, 'EXP009', 'MUN009', 9, 9, 'SN0009', 9, 1),
+(10, 10, 'EXP010', 'MUN010', 10, 10, 'SN0010', 10, 0);
