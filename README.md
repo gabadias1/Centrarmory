@@ -30,7 +30,7 @@ centrarmory/
 │   ├── movimentar.html
 │   ├── cadastrar_usuario.html
 │   ├── selecionar_item.html
-│   └── cadastrar_item_*.html  # Um arquivo para cada tipo de item
+│   └── cadastrar_item_*.html 
 └── README.md
 ```
 
@@ -104,9 +104,9 @@ http://localhost:5000
 
 ## 📌 Autores
 
-Gabriel Dias -- RA:2515571
-Felipe Salazar -- RA2515563
-Marcus Zabla -- RA2504529
+Gabriel Dias -- RA:2515571.
+Felipe Salazar -- RA2515563.
+Marcus Zabla -- RA2504529.
 ---
 
 ## 📄 Licença
