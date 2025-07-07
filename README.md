@@ -24,15 +24,15 @@ CTM/
 
 Passos para testar o projeto:
 
-##1️⃣ Instalar dependências 
+1️⃣ Instalar dependências 
 
     pip install sqlalchemy
 
-##2️⃣ Criar e popular o banco de dados   #A conexão é feita via SQLAlchemy no arquivo models.py //engine = create_engine
+2️⃣ Criar e popular o banco de dados  
 
     Get-Content .\SQL.txt | sqlite3.exe centramnory.db
 
-##3️⃣ Rodar o código Python
+3️⃣ Rodar o código Python
 
     python app.py
 
@@ -40,9 +40,7 @@ Passos para testar o projeto:
 
 ## ✍️ Observações
 
-* O banco de dados será criado com dados fictícios para testes.
-* Todos os arquivos HTML estão no diretório `templates/` e já seguem o estilo unificado.
-
+* A conexão é feita via SQLAlchemy no arquivo models.py //engine = create_engine
 ---
 
 ## 📌 Autores
