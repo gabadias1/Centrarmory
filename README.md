@@ -1,16 +1,8 @@
 # 🛡️ Centrarmory
 
-**Centrarmory** é um sistema web para cadastro, controle de estoque e movimentação de materiais militares (como armas, munições, vestimentas, explosivos, suprimentos e acessórios), incluindo gerenciamento de efetivos.
+Este projeto faz parte da fase 6 do trabalho de armazenamento de base militar.  
+Aqui, implementamos uma camada de acesso a dados utilizando **ORM (SQLAlchemy)** sem alterar o banco que foi projetado nas fases anteriores.
 
----
-
-## 🚀 Funcionalidades
-
-* Cadastro de diferentes tipos de itens
-* Controle de estoque centralizado
-* Movimentações de entrada/saída por efetivos
-* Cadastro e listagem de efetivos com dados completos
-* Visual moderno com CSS customizado
 
 ---
 
@@ -18,80 +10,31 @@
 
 ```
 centrarmory/
-├── app.py                 
-├── models.py            
-├── centrarmory.db  
-├── static/
-│   └── style.css      
-├── templates/
-│   ├── index.html
-│   ├── estoque.html
-│   ├── historico.html
-│   ├── movimentar.html
-│   ├── cadastrar_usuario.html
-│   ├── selecionar_item.html
-│   └── cadastrar_item_*.html 
-└── README.md
+CTM/
+├── app.py 
+├── crud.py 
+├── models.py 
+├── queries.py 
+├── SQL.txt 
+└── README.md 
 ```
 
----
-
-## 🧩 Tecnologias Usadas
-
-* Python 3.10+
-* Flask
-* SQLAlchemy
-* SQLite (local)
-* HTML + CSS
-
----
 
 ## 💻 Como Rodar o Projeto Localmente
 
-### 1. Clone o projeto ou copie a pasta:
+Passos para testar o projeto:
 
-```bash
-git clone https://github.com/seuusuario/centrarmory.git
-cd centrarmory
-```
+##1️⃣ Instalar dependências 
 
-### 2. Crie o ambiente virtual:
+    pip install sqlalchemy
 
-```bash
-python -m venv venv
-```
+##2️⃣ Criar e popular o banco de dados   #A conexão é feita via SQLAlchemy no arquivo models.py //engine = create_engine
 
-### 3. Ative a venv:
+    Get-Content .\SQL.txt | sqlite3.exe centramnory.db
 
-No **Windows**:
+##3️⃣ Rodar o código Python
 
-```bash
-venv\Scripts\activate
-```
-
-### 4. Instale as dependências:
-
-```bash
-pip install flask sqlalchemy
-```
-
-### 5. Crie o banco de dados:
-
-```bash
-python models.py
-```
-
-### 6. Rode o sistema:
-
-```bash
-python app.py
-```
-
-### 7. Acesse no navegador:
-
-```
-http://localhost:5000
-```
+    python app.py
 
 ---
 
