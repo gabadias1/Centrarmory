@@ -9,7 +9,6 @@ Aqui, implementamos uma camada de acesso a dados utilizando **ORM (SQLAlchemy)**
 ## 📁 Estrutura do Projeto
 
 ```
-centrarmory/
 CTM/
 ├── app.py 
 ├── crud.py 
