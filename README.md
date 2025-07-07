@@ -29,7 +29,7 @@ Passos para testar o projeto:
 
 2️⃣ Criar e popular o banco de dados  
 
-    Get-Content .\SQL.txt | sqlite3.exe centramnory.db
+    Get-Content .\SQL.txt | sqlite3.exe centrarmory.db
 
 3️⃣ Rodar o código Python
 
