@@ -40,6 +40,7 @@ Passos para testar o projeto:
 ## ✍️ Observações
 
 * A conexão é feita via SQLAlchemy no arquivo models.py //engine = create_engine
+* ter o sqlite(3.exe) e colocar nos patch de ambiente
 ---
 
 ## 📌 Autores
