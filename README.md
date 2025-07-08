@@ -13,7 +13,7 @@ CTM/
 ├── app.py 
 ├── crud.py 
 ├── models.py 
-├── queries.py 
+├── consultas.py 
 ├── SQL.txt 
 └── README.md 
 ```
